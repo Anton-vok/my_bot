@@ -56,5 +56,6 @@ def start(message):
 def new(message):
     rol=assign_role(history, min_players, roles)
     history.append(rol)
-    bot.send_message(message.chat.id,"твоя роль",rol)
+    text="твоя роль"+rol
+    bot.send_message(message.chat.id,text)
 bot.polling(none_stop=True)
