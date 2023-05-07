@@ -2,7 +2,7 @@ import telebot
 bot=telebot.TeleBot("6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo")
 history=[]
 min_players=1
-role=[
+roles=[
     ["one",None,None,1],
     ["two",None,None,1]
 ]
