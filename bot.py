@@ -32,7 +32,7 @@ def assign_role(history, min_players, roles):
     if remaining_slots <= len(remaining_roles):
         for role in remaining_roles[:remaining_slots]:
             history.append(role[0])
-        return history
+        return role[0]
 
     # Если осталось больше ролей, чем игроков, то мы выбираем роли с вероятностями,
     # пропорциональными их "весам" (третий параметр в списке roles).
