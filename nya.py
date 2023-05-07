@@ -73,7 +73,35 @@ def get_roles(update: Update, context: CallbackContext):
         roles = ', '.join([f"{unique_roles[i]}: {roles_count[i]}" for i in range(len(unique_roles))])
         update.message.reply_text(f"Roles: {roles}")
 
+
 def new(update: Update, context: CallbackContext):
     global history, mini, rul
     if update.effective_user.username in history:
-        update.message.reply_text("Вы уже получили роль. Дождитесь обновления
+        update.message.reply_text("Вы уже получили роль. Дождитесь обновления ролей.")
+        return
+    me = assign_role(history, mini, rul)
+    history.append(update.effective_user.username)
+    update.message.reply_text(me)
+
+def main():
+    updater = Updater("6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo", update_queue=Queue())
+
+    dispatcher = updater.dispatcher
+
+    dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(MessageHandler(filters.text & ~Filters.command, handle_message))
+    dispatcher.add_handler(CommandHandler("new", new))
+    dispatcher.add_handler(CommandHandler("get", get_registered_players))
+    dispatcher.add_handler(CommandHandler("rol", get_roles))
+
+    updater.start_polling()
+
+    updater.idle()
+
+if __name__ == "__main__":
+    history = []
+    mini = 0
+    rul = []
+
+    main()
+
