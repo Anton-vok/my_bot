@@ -38,10 +38,8 @@ def start(message):
     bot.send_message(message.chat.id,"https://t.me/GenRolACHV")
     bot.send_message(message.chat.id,"Если ты сейчас напишешь /new, бот отправит тебе твою роль.\nЕсли что-то не работает, сообщи мне: @A_CH_V\nпожалуйста, не ломайте ничего, он и так сделан на коленке)")
 @bot.message_handler(commands=['new'])
-def new(message,user):
-    user_name=user.username()
-    history_user.append(user_name)
+def new(message):
     rol=assign_role(history, min_players, roles)
     history.append(rol)
-    bot.send_message(message.chat.id,"твоя роль ${rol},твой id ${user_name}")
+    bot.send_message(message.chat.id,"твоя роль ${rol}")
 bot.polling(none_stop=True)
