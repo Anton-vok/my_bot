@@ -1,11 +1,7 @@
-import telebot;
-bot = telebot.TeleBot('%ваш токен%');
-bot = telebot.TeleBot(token="6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo")
-print("yy")
-@bot.message_handler(content_types=['text'])
-def get_text_messages(message):
-    bot.send_message(message.chat.id,"Привет. Я создан для раздачи ролей в ролевой игре 'The Adventurers Guild'.")
-    bot.send_message(message.chat.id,"https://t.me/GenRolACHV")
-    bot.send_message(message.chat.id,"Если ты сейчас напишешь /new, бот отправит тебе твою роль.")
-    bot.send_message(message.chat.id,"Если что-то не работает, сообщи мне: @A_CH_V")
-    bot.send_message(message.chat.id,"(пожалуйста, не ломайте ничего, он и так сделан на коленке)")
+from aiogram import Bot, Dispatcher, executor, types
+API_TOKEN="6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo"
+bot = Bot(token=API_TOKEN)
+dp = Dispatcher(bot)
+@dp.message_handler(commands=['start']) #Явно указываем в декораторе, на какую команду реагируем. 
+async def send_welcome(message: types.Message):
+   await message.reply("Привет!\nЯ Эхо-бот от Skillbox!\nОтправь мне любое сообщение, а я тебе обязательно отвечу.") #Так как код работает асинхронно, то обязательно пишем await.
