@@ -15,8 +15,7 @@ def parse_roles_text(text):
         parts = role_line.split(', ')
         role_name = parts[0]
         min_role = int(parts[1].split()[1])
-        max_role_str = parts[2].split()[1]
-        max_role = None if max_role_str == "null" else int(max_role_str)
+        max_role = None if parts[2].split()[1] == "null" else int(parts[2].split()[1])
         probability = int(parts[3].split()[2])
 
         roles.append([role_name, min_role, max_role, probability])
@@ -77,30 +76,4 @@ def get_roles(update: Update, context: CallbackContext):
 def new(update: Update, context: CallbackContext):
     global history, mini, rul
     if update.effective_user.username in history:
-        update.message.reply_text("Вы уже получили роль. Дождитесь обновления ролей.")
-        return
-    me = assign_role(history, mini, rul)
-    history.append(update.effective_user.username)
-    update.message.reply_text(me)
-
-def main():
-    updater = Updater("6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo",update_queue=Queue())
-
-    dispatcher = updater.dispatchers
-
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(MessageHandler(filters.text & ~Filters.command, handle_message))
-    dispatcher.add_handler(CommandHandler("new", new))
-    dispatcher.add_handler(CommandHandler("get", get_registered_players))
-    dispatcher.add_handler(CommandHandler("rol", get_roles))
-
-    updater.start_polling()
-
-    updater.idle()
-
-if __name__ == "__main__":
-    history = []
-    mini = 0
-    rul = []
-
-    main()
+        update.message.reply_text("Вы уже получили роль. Дождитесь обновления
