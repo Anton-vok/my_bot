@@ -1,5 +1,6 @@
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, filters, CallbackContext
+from queue import Queue
 
 import random
 
