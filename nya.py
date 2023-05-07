@@ -83,7 +83,7 @@ def new(update: Update, context: CallbackContext):
     update.message.reply_text(me)
 
 def main():
-    updater = Updater("6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo", use_context=True)
+    updater = Updater("6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo")
 
     dispatcher = updater.dispatcher
 
