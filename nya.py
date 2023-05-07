@@ -86,7 +86,7 @@ def new(update: Update, context: CallbackContext):
 def main():
     updater = Updater("6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo", update_queue=Queue())
 
-    dispatcher = updater.dispatchers
+    dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(MessageHandler(filters.text & ~Filters.command, handle_message))
