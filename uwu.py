@@ -1,9 +1,24 @@
-from aiogram import Bot, Dispatcher, executor, types
-API_TOKEN="6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo"
-bot = Bot(token=API_TOKEN)
-dp = Dispatcher(bot)
-@dp.message_handler(commands=['start']) #Явно указываем в декораторе, на какую команду реагируем. 
-async def send_welcome(message: types.Message):
-   await message.reply("Привет!\nЯ Эхо-бот от Skillbox!\nОтправь мне любое сообщение, а я тебе обязательно отвечу.") #Так как код работает асинхронно, то обязательно пишем await.
+import telegram
+from telegram.ext import Updater, CommandHandler
+
+def start(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Привет!")
+
+def main():
+    # Создаем объект Updater и передаем ему токен бота
+    updater = Updater("<your_bot_token_here>", use_context=True)
+
+    # Получаем объект диспетчера для регистрации обработчиков
+    dp = updater.dispatcher
+
+    # Регистрируем обработчик команды /start
+    dp.add_handler(CommandHandler("start", start))
+
+    # Запускаем бота
+    updater.start_polling()
+
+    # Останавливаем бота при получении сигнала SIGINT (Ctrl+C в терминале)
+    updater.idle()
+
 if __name__ == '__main__':
-   executor.start_polling(dp, skip_updates=True)
+    main()
