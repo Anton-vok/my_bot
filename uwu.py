@@ -1,7 +1,7 @@
 import telebot;
 bot = telebot.TeleBot('%ваш токен%');
 bot = telebot.TeleBot(token="6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo")
-
+print("yy")
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
     bot.send_message(message.chat.id,"Привет. Я создан для раздачи ролей в ролевой игре 'The Adventurers Guild'.")
