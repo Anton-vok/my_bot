@@ -54,8 +54,7 @@ def start(message):
     bot.send_message(message.chat.id,"Если ты сейчас напишешь /new, бот отправит тебе твою роль.\nЕсли что-то не работает, сообщи мне: @A_CH_V\nпожалуйста, не ломайте ничего, он и так сделан на коленке)")
 @bot.message_handler(commands=['new'])
 def new(message):
-    rol=assign_role(history, min_players, roles)
-    history.append(rol)
-    text=f"твоя роль-{rol}"
-    bot.send_message(message.chat.id,text)
+    rol = assign_role(history, min_players, roles)  # Изменена переменная 'rol'
+    text = f"твоя роль - {rol}"
+    bot.send_message(message.chat.id, text)
 bot.polling(none_stop=True)
