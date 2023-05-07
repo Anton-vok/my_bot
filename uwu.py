@@ -1,6 +1,6 @@
-import telegram
-
-bot = telegram.Bot(token="6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo")
+import telebot;
+bot = telebot.TeleBot('%ваш токен%');
+bot = telebot.TeleBot(token="6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo")
 
 @bot.message_handler(commands=["start"])
 def start(message):
