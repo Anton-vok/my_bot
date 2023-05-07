@@ -3,7 +3,7 @@ bot=telebot.TeleBot("6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo")
 history=[]
 min_players=1
 role=[
-    ["one",None,None,1]
+    ["one",None,None,1],
     ["two",None,None,1]
 ]
 history_user=[]
