@@ -6,7 +6,7 @@ def start(update, context):
 
 def main():
     # Создаем объект Updater и передаем ему токен бота
-    updater = Updater("<your_bot_token_here>", use_context=True)
+    updater = Updater("6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo", use_context=True)
 
     # Получаем объект диспетчера для регистрации обработчиков
     dp = updater.dispatcher
