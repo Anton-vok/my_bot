@@ -88,7 +88,7 @@ def main():
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
+    dispatcher.add_handler(MessageHandler(filters.text & ~Filters.command, handle_message))
     dispatcher.add_handler(CommandHandler("new", new))
     dispatcher.add_handler(CommandHandler("get", get_registered_players))
     dispatcher.add_handler(CommandHandler("rol", get_roles))
