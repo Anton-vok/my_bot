@@ -58,4 +58,27 @@ def new(message):
         user_rol.update({user_name:rol})
         rol_user.update({rol:user_name})
         bot.send_message(message.chat.id, f"твоя роль {rol}")
+
+@bot.message_handler(commands=["rolAll"])
+def rolAll(message):
+    text=""
+    for obj in history:
+        text=text+obj+", "
+    bot.send_message(message.chat.id,text)
+@bot.message_handler(commands=["userAll"])
+def userAll(message):
+    text=""
+    for obj in history_user:
+        text=text+obj+", "
+    bot.send_message(message.chat.id,text)
+@bot.message_handler(commands=["rol"])
+def rol(message):
+    user=message.text
+    text=user_rol[user]
+    bot.send_message(message.chat.id,text)
+@bot.message_handler(commands=["user"])
+def user(message):
+    rol=message.text
+    text=rol_user[rol]
+    bot.send_message(message.chat.id,text)
 bot.polling(none_stop=True)
