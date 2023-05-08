@@ -50,7 +50,7 @@ def start(message):
 def new(message):
     user_name=message.from_user.username
     if (user_name in history_user):
-        bot.send_message(message.chat.id,f"Ты уже получил роль. Твоя роль{user_rol[user_name]}")
+        bot.send_message(message.chat.id,f"Ты уже получил роль. Твоя роль {user_rol[user_name]}")
     else:
         history_user.append(user_name)
         rol = generate_random_role(min_players, history, roles)
