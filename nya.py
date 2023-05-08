@@ -54,7 +54,8 @@ def parse_input(input_str):
             name = role_data[0].strip()
             low = int(role_data[1].strip())
             high = role_data[2].strip()
-            percentage = int(role_data[3].strip('%'))
+            percentage = int(role_data[3].strip('%').strip())
+
 
             if high == "Inf":
                 high = None
