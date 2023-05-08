@@ -48,7 +48,7 @@ def start(message):
     bot.send_message(message.chat.id,"Если ты сейчас напишешь /new, бот отправит тебе твою роль.\nЕсли что-то не работает, сообщи мне: @A_CH_V\nпожалуйста, не ломайте ничего, он и так сделан на коленке)")
 @bot.message_handler(commands=['new'])
 def new(message):
-    user_name=message.from_user.username
+    user_name="@"+message.from_user.username
     if (user_name in history_user):
         bot.send_message(message.chat.id,f"Ты уже получил роль. Твоя роль {user_rol[user_name]}")
     else:
