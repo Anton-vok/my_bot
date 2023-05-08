@@ -5,5 +5,5 @@ from collections import Counter
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.send_message(message.chat.id,message.from_chat.id)
+    bot.send_message(message.chat.id,message.chat.id)
 bot.polling(none_stop=True)    
