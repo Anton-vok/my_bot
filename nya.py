@@ -1,107 +1,160 @@
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, filters, CallbackContext
-from queue import Queue
-
+#Импортирование модулей и начальная настройка
+import telebot
+bot=telebot.TeleBot("6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo")
 import random
+from collections import Counter
 
-def parse_roles_text(text):
-    lines = text.strip().split('\n')
-    min_participants_line, *role_lines = lines
+#Базовый набор ролей(заглушка)
+history = []
+min_players = 2
+roles = [
+    ["one", 1, None, 20],
+    ["two", 1, 3, 80]
+]
+history_user = []
+user_rol={}
+rol_user={}
 
-    min_participants = int(min_participants_line.split()[1])
+#Функция выбора ролей
+#min_calls-гарантирование минемальное количество участников
+#role_history рошлые выпавшие рольи
+#role_rules правила ролей в формате название_роли,мин_количество_выпадений,макс_количество_выпадений(None-бесконечность),вераятность_выпадения_в_процентах(в итоге все роли 100%)
+def generate_random_role(min_calls, role_history, role_rules):
+    total_prob = sum([rule[3] for rule in role_rules])
+    if total_prob != 100:
+        raise ValueError("Сумма вероятностей всех ролей должна равняться 100%")
+    
+    role_counts = Counter(role_history)
+    
+    if len(role_history) < min_calls:
+        needed_roles = [rule for rule in role_rules if role_counts[rule[0]] < rule[1]]
+        
+        if needed_roles:
+            remaining_calls = min_calls - len(role_history)
+            needed_roles.sort(key=lambda x: x[1] - role_counts[x[0]], reverse=True)
+            if remaining_calls >= sum([x[1] - role_counts[x[0]] for x in needed_roles]):
+                return random.choice(needed_roles)[0]
+            
+    while True:
+        chosen_role = random.choices(role_rules, weights=[rule[3] for rule in role_rules])[0]
+        if chosen_role[2] is None or role_counts[chosen_role[0]] < chosen_role[2]:
+            return chosen_role[0]
+#гига парсер котрый будет легаси сто лет, пока проект не закроют нах##
+def parse_input(input_str):
+    try:
+        lines = input_str.strip().split('\n')
+        min_val_line = lines.pop(0).split()
+        min_val = int(min_val_line[1])
 
-    roles = []
-    for role_line in role_lines:
-        parts = role_line.split(', ')
-        role_name = parts[0]
-        min_role = int(parts[1].split()[1])
-        max_role = None if parts[2].split()[1] == "null" else int(parts[2].split()[1])
-        probability = int(parts[3].split()[2])
+        roles = []
+        total_percentage = 0
 
-        roles.append([role_name, min_role, max_role, probability])
+        for line in lines:
+            role_data = line.split(', ')
+            name = role_data[0]
+            low = int(role_data[1])
+            high = role_data[2]
+            percentage = int(role_data[3].strip('%'))
 
-    return min_participants, roles
+            if high == "Inf":
+                high = None
+            else:
+                high = int(high)
 
-def assign_role(history, min_players, roles):
-    roles_with_min_requirement = [role for role in roles if history.count(role[0]) < role[1]]
+            roles.append([name, low, high, percentage])
+            total_percentage += percentage
 
-    if len(roles_with_min_requirement) > 0:
-        return random.choice(roles_with_min_requirement)[0]
+        low_sum = sum(role[1] for role in roles)
+        high_sum = sum(role[2] for role in roles if role[2] is not None)
 
-    remaining_slots = min_players - len(history)
-    remaining_roles = []
+        if min_val <= low_sum:
+            return None, "Ошибка: Минимальное значение должно быть больше суммы первых чисел каждой роли."
+        if high_sum is not None and min_val >= high_sum:
+            return None, "Ошибка: Минимальное значение должно быть меньше суммы вторых чисел каждой роли."
+        if total_percentage != 100:
+            return None, "Ошибка: Сумма третьих чисел должна равняться 100%."
 
-    for role in roles:
-        if role[2] is None or history.count(role[0]) < role[2]:
-            remaining_roles.append(role)
+        return (min_val, roles), None
+
+    except Exception as e:
+        return None, str(e)
+
+
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.send_message(message.chat.id,'Привет. Я создан для раздачи ролей в ролевой "The Adventurers Guild".')
+    bot.send_message(message.chat.id,"https://t.me/GenRolACHV")
+    bot.send_message(message.chat.id,"Если ты сейчас напишешь /new, бот отправит тебе твою роль.\nЕсли что-то не работает, сообщи мне: @A_CH_V\nпожалуйста, не ломайте ничего, он и так сделан на коленке)")
+@bot.message_handler(commands=['new'])
+def new(message):
+    user_name="@"+message.from_user.username
+    if (user_name in history_user):
+        bot.send_message(message.chat.id,f"Ты уже получил роль. Твоя роль {user_rol[user_name]}")
+    else:
+        history_user.append(user_name)
+        rol = generate_random_role(min_players, history, roles)
+        history.append(rol)
+        user_rol.update({user_name:rol})
+        rol_user.update({rol:user_name})
+        bot.send_message(message.chat.id, f"твоя роль {rol}")
+
+@bot.message_handler(commands=["rolAll"])
+def rolAll(message):
+    if message.chat.id==-975731544:
+        text=""
+        for obj in history:
+            text=text+obj+", "
+        bot.send_message(message.chat.id,text)
+    else:
+        bot.send_message(message.chat.id,"У мужлан нет прав")
+@bot.message_handler(commands=["userAll"])
+def userAll(message):
+    if message.chat.id==-975731544:
+        text=""
+        for obj in history_user:
+            text=text+obj+", "
+        bot.send_message(message.chat.id,text)
+    else:
+        bot.send_message(message.chat.id,"У мужлан нет прав")
+@bot.message_handler(commands=["rol"])
+def rol(message):
+    if message.chat.id==-975731544:
+        try:
+            user = message.text
+            user = user.replace('/rol', '')
+            user = user.replace(" ","")
+            text = user_rol[user]
+            bot.send_message(message.chat.id, text)
+        except KeyError:
+            bot.send_message(message.chat.id, "Такой роли нету")
+    else:
+        bot.send_message(message.chat.id,"У мужлан нет прав")
+@bot.message_handler(commands=["user"])
+def user(message):
+    if message.chat.id==-975731544:
+        try:
+            rol = message.text
+            rol = rol.replace('/user', '')
+            rol = rol.replace(" ","")
+            text = rol_user[rol]
+            bot.send_message(message.chat.id, text)
+        except KeyError:
+            bot.send_message(message.chat.id, "Такого пользователя нету")
+    else:
+        bot.send_message(message.chat.id,"У мужлан нет прав")
+@bot.message_handler(commands=["new_rol"])
+def new_rol(message):
+    if message.chat.id==-975731544:
+        if parsed_data:
+            min_value, roles_list = parsed_data
+            history=[]
+            history_user=[]
+            rol_user={}
+            user_rol={}
+            bot.send_message(message.chat.id,"OK 400")       
         else:
-            remaining_slots += role[1]
-
-    role_chances = []
-
-    for role in remaining_roles:
-        role_count = remaining_slots * role[3] // sum(r[3] for r in remaining_roles)
-        role_chances += [role[0]] * role_count
-
-    return random.choice(role_chances)
-
-def start(update: Update, context: CallbackContext):
-    update.message.reply_text('Привет. Я создан для раздачи ролей в ролевой игре "The Adventurers Guild".')
-    update.message.reply_text("https://t.me/GenRolACHV")
-    update.message.reply_text("Если ты сейчас напишешь /new, бот отправит тебе твою роль.")
-    update.message.reply_text("Если что-то не работает, сообщи мне: @A_CH_V")
-    update.message.reply_text("(пожалуйста, не ломайте ничего, он и так сделан на коленке)")
-
-def handle_message(update: Update, context: CallbackContext):
-    global history, mini, rul
-    chat_id = update.effective_chat.id
-    if chat_id == -1001690902050:
-        mini, rul = parse_roles_text(update.message.text)
-        history = []
-
-def get_registered_players(update: Update, context: CallbackContext):
-    global history
-    if update.effective_chat.id == -1001690902050:
-        players = ', '.join(history)
-        update.message.reply_text(f"Registered players: {players}")
-
-def get_roles(update: Update, context: CallbackContext):
-    global history
-    if update.effective_chat.id == -1001690902050:
-        unique_roles = list(set(history))
-        roles_count = [history.count(role) for role in unique_roles]
-        roles = ', '.join([f"{unique_roles[i]}: {roles_count[i]}" for i in range(len(unique_roles))])
-        update.message.reply_text(f"Roles: {roles}")
-
-
-def new(update: Update, context: CallbackContext):
-    global history, mini, rul
-    if update.effective_user.username in history:
-        update.message.reply_text("Вы уже получили роль. Дождитесь обновления ролей.")
-        return
-    me = assign_role(history, mini, rul)
-    history.append(update.effective_user.username)
-    update.message.reply_text(me)
-
-def main():
-    updater = Updater("6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo", update_queue=Queue())
-
-    dispatcher = updater.dispatcher
-
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(MessageHandler(filters.text & ~Filters.command, handle_message))
-    dispatcher.add_handler(CommandHandler("new", new))
-    dispatcher.add_handler(CommandHandler("get", get_registered_players))
-    dispatcher.add_handler(CommandHandler("rol", get_roles))
-
-    updater.start_polling()
-
-    updater.idle()
-
-if __name__ == "__main__":
-    history = []
-    mini = 0
-    rul = []
-
-    main()
-
+            bot.send_message(message.chat.id,f"Ошибка во вводе данных: {error_message}")
+    else:
+        bot.send_message(message.chat.id,"У мужлан нет прав")
+bot.polling(none_stop=True)
