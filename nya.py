@@ -43,7 +43,6 @@ def generate_random_role(min_calls, role_history, role_rules):
 def parse_input(input_str):
     try:
         lines = input_str.strip().split('\n')
-        lines.pop(0)  # Удалить строку с командой /new_rol
         min_val_line = lines.pop(0).split()
         min_val = int(min_val_line[1])
 
@@ -68,10 +67,10 @@ def parse_input(input_str):
         low_sum = sum(role[1] for role in roles)
         high_sum = sum(role[2] for role in roles if role[2] is not None)
 
-        if min_val <= low_sum:
-            return None, "Ошибка: Минимальное значение должно быть больше суммы первых чисел каждой роли."
-        if high_sum is not None and min_val >= high_sum:
-            return None, "Ошибка: Минимальное значение должно быть меньше суммы вторых чисел каждой роли."
+        if min_val < low_sum:
+            return None, "Ошибка: Минимальное значение должно быть больше или равно сумме первых чисел каждой роли."
+        if high_sum is not None and min_val > high_sum:
+            return None, "Ошибка: Минимальное значение должно быть меньше или равно суммы вторых чисел каждой роли, если они не равны 'Inf'."
         if total_percentage != 100:
             return None, "Ошибка: Сумма третьих чисел должна равняться 100%."
 
@@ -79,8 +78,6 @@ def parse_input(input_str):
 
     except Exception as e:
         return None, str(e)
-
-
 
 
 @bot.message_handler(commands=['start'])
