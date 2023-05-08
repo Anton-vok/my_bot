@@ -1,6 +1,7 @@
 import telebot
 bot=telebot.TeleBot("6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo")
 import random
+from collections import Counter
 
 history = []
 min_players = 2
@@ -10,8 +11,6 @@ roles = [
 ]
 history_user = []
 
-import random
-from collections import Counter
 
 def generate_random_role(min_calls, role_history, role_rules):
     total_prob = sum([rule[3] for rule in role_rules])
@@ -40,25 +39,11 @@ def start(message):
     bot.send_message(message.chat.id,"https://t.me/GenRolACHV")
     bot.send_message(message.chat.id,"Если ты сейчас напишешь /new, бот отправит тебе твою роль.\nЕсли что-то не работает, сообщи мне: @A_CH_V\nпожалуйста, не ломайте ничего, он и так сделан на коленке)")
 @bot.message_handler(commands=['new'])
-def new(message,user):
-    user_name=user.username()
-    history_user.append(user_name)
-    rol=assign_role(history, min_players, roles)
-    history.append(rol)
-    bot.send_message(message.chat.id,"твоя роль ${rol},твой id ${user_name}")
-bot.polling(none_stop=True)
-
-
-
-
-@bot.message_handler(commands=['start'])
-def start(message):
-    bot.send_message(message.chat.id,'Привет. Я создан для раздачи ролей в ролевой "The Adventurers Guild".')
-    bot.send_message(message.chat.id,"https://t.me/GenRolACHV")
-    bot.send_message(message.chat.id,"Если ты сейчас напишешь /new, бот отправит тебе твою роль.\nЕсли что-то не работает, сообщи мне: @A_CH_V\nпожалуйста, не ломайте ничего, он и так сделан на коленке)")
-@bot.message_handler(commands=['new'])
 def new(message):
-    rol = generate_random_role(history, min_players, roles)  # Изменена переменная 'rol'
-    text = f"твоя роль - {rol}"
-    bot.send_message(message.chat.id, text)
+    user_name = message.from_user.username
+    history_user.append(user_name)
+    rol = generate_random_role(min_players, history, roles)  # Используйте функцию 'generate_random_role'
+    history.append(rol)
+    bot.send_message(message.chat.id, f"твоя роль {rol}, твой id {user_name}")  # Используйте f-строку для форматирования текста
+
 bot.polling(none_stop=True)
