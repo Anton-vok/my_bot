@@ -10,20 +10,30 @@ roles = [
 ]
 history_user = []
 
+import random
+from collections import Counter
+
 def generate_random_role(min_calls, role_history, role_rules):
     total_prob = sum([rule[3] for rule in role_rules])
     if total_prob != 100:
         raise ValueError("Сумма вероятностей всех ролей должна равняться 100%")
-
+    
+    role_counts = Counter(role_history)
+    
     if len(role_history) < min_calls:
-        needed_roles = [rule for rule in role_rules if role_history.count(rule[0]) < rule[1]]
+        needed_roles = [rule for rule in role_rules if role_counts[rule[0]] < rule[1]]
+        
         if needed_roles:
-            return random.choice(needed_roles)[0]
-
+            remaining_calls = min_calls - len(role_history)
+            needed_roles.sort(key=lambda x: x[1] - role_counts[x[0]], reverse=True)
+            if remaining_calls >= sum([x[1] - role_counts[x[0]] for x in needed_roles]):
+                return random.choice(needed_roles)[0]
+            
     while True:
         chosen_role = random.choices(role_rules, weights=[rule[3] for rule in role_rules])[0]
-        if chosen_role[2] is None or role_history.count(chosen_role[0]) < chosen_role[2]:
+        if chosen_role[2] is None or role_counts[chosen_role[0]] < chosen_role[2]:
             return chosen_role[0]
+
 
 
 
