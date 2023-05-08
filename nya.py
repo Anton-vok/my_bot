@@ -141,13 +141,13 @@ def user(message):
 @bot.message_handler(commands=["new_rol"])
 def new_rol(message):
     if message.chat.id==-975731544:
-        x, y, errors = process_input(input_str)
+        x, y, errors = process_input(message.text)  # замените input_str на message.text
 
         if errors:
             for error in errors:
                 bot.send_message(message.chat.id,f"Ошибка во вводе данных: {error}")
         else:
-            min_value, roles_list =x,y
+            min_players, roles = x, y
             history=[]
             history_user=[]
             rol_user={}
@@ -155,4 +155,5 @@ def new_rol(message):
             bot.send_message(message.chat.id,"OK 400")       
     else:
         bot.send_message(message.chat.id,"У мужлан нет прав")
+
 bot.polling(none_stop=True)
