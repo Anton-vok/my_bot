@@ -44,6 +44,6 @@ def new(message):
     history_user.append(user_name)
     rol = generate_random_role(min_players, history, roles)  # Используйте функцию 'generate_random_role'
     history.append(rol)
-    bot.send_message(message.chat.id, f"твоя роль {rol}, твой id {user_name}")  # Используйте f-строку для форматирования текста
+    bot.send_message(message.chat.id, f"твоя роль {rol}")  # Используйте f-строку для форматирования текста
 
 bot.polling(none_stop=True)
