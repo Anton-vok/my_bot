@@ -1,8 +1,10 @@
+#Импортирование модулей и начальная настройка
 import telebot
 bot=telebot.TeleBot("6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo")
 import random
 from collections import Counter
 
+#Базовый набор ролей(заглушка)
 history = []
 min_players = 2
 roles = [
@@ -10,8 +12,13 @@ roles = [
     ["two", 1, 3, 80]
 ]
 history_user = []
+user_rol={}
+rol_user={}
 
-
+#Функция выбора ролей
+#min_calls-гарантирование минемальное количество участников
+#role_history рошлые выпавшие рольи
+#role_rules правила ролей в формате название_роли,мин_количество_выпадений,макс_количество_выпадений(None-бесконечность),вераятность_выпадения_в_процентах(в итоге все роли 100%)
 def generate_random_role(min_calls, role_history, role_rules):
     total_prob = sum([rule[3] for rule in role_rules])
     if total_prob != 100:
@@ -33,6 +40,7 @@ def generate_random_role(min_calls, role_history, role_rules):
         if chosen_role[2] is None or role_counts[chosen_role[0]] < chosen_role[2]:
             return chosen_role[0]
 
+
 @bot.message_handler(commands=['start'])
 def start(message):
     bot.send_message(message.chat.id,'Привет. Я создан для раздачи ролей в ролевой "The Adventurers Guild".')
@@ -40,10 +48,14 @@ def start(message):
     bot.send_message(message.chat.id,"Если ты сейчас напишешь /new, бот отправит тебе твою роль.\nЕсли что-то не работает, сообщи мне: @A_CH_V\nпожалуйста, не ломайте ничего, он и так сделан на коленке)")
 @bot.message_handler(commands=['new'])
 def new(message):
-    user_name = message.from_user.username
-    history_user.append(user_name)
-    rol = generate_random_role(min_players, history, roles)  # Используйте функцию 'generate_random_role'
-    history.append(rol)
-    bot.send_message(message.chat.id, f"твоя роль {rol}")  # Используйте f-строку для форматирования текста
-
+    user_name=message.from_user.username
+    if (user_name in history_user):
+        bot.send_message(message.chat.id,f"Ты уже получил роль. Твоя роль{user_rol[user_name]}")
+    else:
+        history_user.append(user_name)
+        rol = generate_random_role(min_players, history, roles)
+        history.append(rol)
+        user_rol.update({user_name:rol})
+        rol_user.update({rol:user_name})
+        bot.send_message(message.chat.id, f"твоя роль {rol}")
 bot.polling(none_stop=True)
