@@ -73,23 +73,23 @@ def userAll(message):
     bot.send_message(message.chat.id,text)
 @bot.message_handler(commands=["rol"])
 def rol(message):
-    user=message.text
-    user=user.replace('/rol', '')
-    user=user.replace(" ","")
-    text=user_rol[user]
-    if text is not None:
-        bot.send_message(message.chat.id,text)
-    else:
-        bot.send_message(message.chat.id,"Такого роли нету")
-    bot.send_message(message.chat.id,text)
+    try:
+        user = message.text
+        user = user.replace('/rol', '')
+        user = user.replace(" ","")
+        text = user_rol[user]
+        bot.send_message(message.chat.id, text)
+    except KeyError:
+        bot.send_message(message.chat.id, "Такой роли нету")
+
 @bot.message_handler(commands=["user"])
 def user(message):
-    rol=message.text
-    rol=rol.replace('/user', '')
-    rol=rol.replace(" ","")
-    text=rol_user[rol]
-    if text is not None:
-        bot.send_message(message.chat.id,text)
-    else:
-        bot.send_message(message.chat.id,"Такого user нету")
+    try:
+        rol = message.text
+        rol = rol.replace('/user', '')
+        rol = rol.replace(" ","")
+        text = rol_user[rol]
+        bot.send_message(message.chat.id, text)
+    except KeyError:
+        bot.send_message(message.chat.id, "Такого пользователя нету")
 bot.polling(none_stop=True)
