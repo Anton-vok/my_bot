@@ -146,6 +146,7 @@ def user(message):
 @bot.message_handler(commands=["new_rol"])
 def new_rol(message):
     if message.chat.id==-975731544:
+        parsed_data, error_message = parse_input(message.text)
         if parsed_data:
             min_value, roles_list = parsed_data
             history=[]
