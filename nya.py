@@ -43,6 +43,7 @@ def generate_random_role(min_calls, role_history, role_rules):
 def parse_input(input_str):
     try:
         lines = input_str.strip().split('\n')
+        lines.pop(0)  # Удалить строку с командой /new_rol
         min_val_line = lines.pop(0).split()
         min_val = int(min_val_line[1])
 
@@ -78,6 +79,7 @@ def parse_input(input_str):
 
     except Exception as e:
         return None, str(e)
+
 
 
 
