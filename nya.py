@@ -50,10 +50,10 @@ def parse_input(input_str):
         total_percentage = 0
 
         for line in lines:
-            role_data = line.split(', ')
-            name = role_data[0]
-            low = int(role_data[1])
-            high = role_data[2]
+            role_data = line.split('|')
+            name = role_data[0].strip()
+            low = int(role_data[1].strip())
+            high = role_data[2].strip()
             percentage = int(role_data[3].strip('%'))
 
             if high == "Inf":
