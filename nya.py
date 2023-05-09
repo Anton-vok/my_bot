@@ -97,6 +97,7 @@ def process_input(input_str):
         second = None if parts[2].strip() == "Inf" else int(parts[2].strip())
         third = float(parts[3].strip().rstrip('%'))
 
+
         roles.append([name, first, second, third])
 
     errors = []
