@@ -85,41 +85,30 @@ def generate_random_role(min_calls, role_history, role_rules):
         if chosen_role[2] is None or role_counts[chosen_role[0]] < chosen_role[2]:
             return chosen_role[0]
 #гига парсер котрый будет легаси сто лет, пока проект не закроют нах##
-def process_input(input_str):
-    lines = input_str.strip().split('\n')
-    min_value = int(lines[1].strip())
 
-    roles = []
-    for line in lines[2:]:
-        parts = line.strip().split(',')
-        name = parts[0].strip()
-        first = int(parts[1].strip())
-        second = None if parts[2].strip() == "Inf" else int(parts[2].strip())
-        third = float(parts[3].strip().rstrip('%'))
+def process_input_data(input_data):
+    try:
+        input_lines = input_data.split('\n')
+        min_players = int(input_lines[1])
+        roles = []
+        
+        for line in input_lines[2:]:
+            if line.strip() != "":
+                role_data = line.split(',')
+                role = [role_data[0].strip()]
+                for num in role_data[1:]:
+                    try:
+                        value = int(num) if 'Inf' not in num else float(num)
+                    except ValueError:
+                        value = float('Inf')
+                    role.append(value)
+                roles.append(role)
 
+        return True, min_players, roles
 
-        roles.append([name, first, second, third])
-
-    errors = []
-
-    # Проверка 1: Ошибка ввода
-    if not input_str.startswith("/new_rol"):
-        errors.append("Ошибка: Ввод должен начинаться с '/new_rol'")
-
-    # Проверка 2: Мин меньше чем сумма первых чисел в ролях
-    if min_value < sum(role[1] for role in roles):
-        errors.append("Ошибка: Минимальное значение меньше суммы первых чисел в ролях")
-
-    # Проверка 3: Мин больше чем сумма вторых чисел в ролях
-    sum_second = sum(role[1] if role[2] is None else role[2] for role in roles)
-    if min_value > sum_second and not any(role[2] is None for role in roles):
-        errors.append("Ошибка: Минимальное значение больше суммы вторых чисел в ролях")
-
-    # Проверка 4: Сумма третьих чисел во всех ролях не равна 100
-    if not sum(role[3] for role in roles) == 100:
-        errors.append("Ошибка: Сумма третьих чисел во всех ролях не равна 100")
-
-    return min_value, roles, errors
+    except Exception as e:
+        print("Ошибка обработки данных:", e)
+        return False, None, None
 
 
 @bot.message_handler(commands=['start'])
@@ -191,18 +180,17 @@ def new_rol(message):
     global min_players, roles, history, history_user, rol_user, user_rol  # добавьте эту строку
     
     if message.chat.id == -975731544:
-        x, y, errors = process_input(message.text)
+        success, x, y= process_input_data(input_data)
 
-        if errors:
-            for error in errors:
-                bot.send_message(message.chat.id, f"Ошибка во вводе данных: {error}")
-        else:
+        if succes:
             min_players, roles = x, y
             history = []
             history_user = []
             rol_user = {}
             user_rol = {}
             bot.send_message(message.chat.id, "OK 400")
+        else:
+            bot.send_message(message.chat.id, "Нет")
     else:
         bot.send_message(message.chat.id, "У мужлан нет прав")
 
