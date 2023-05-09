@@ -1,19 +1,64 @@
-#Импортирование модулей и начальная настройка
 import telebot
-bot=telebot.TeleBot("6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo")
 import random
+import json
 from collections import Counter
 
-#Базовый набор ролей(заглушка)
+# Импортирование модулей и начальная настройка
+bot = telebot.TeleBot("6024635066:AAFGjWIB62DdBx355aCCduZJdTKvBphnsBo")
+
+# Заглушка для данных
+default_data = {
+    'history': [],
+    'min_players': 2,
+    'roles': [
+        ["one", 1, None, 20],
+        ["two", 1, 3, 80]
+    ],
+    'history_user': [],
+    'user_rol': {},
+    'rol_user': {},
+}
+
 history = []
 min_players = 2
-roles = [
-    ["one", 1, None, 20],
-    ["two", 1, 3, 80]
-]
+roles = []
 history_user = []
-user_rol={}
-rol_user={}
+user_rol = {}
+rol_user = {}
+
+# Функция для сохранения данных в файл
+def save_data_to_file():
+    data = {
+        'history': history,
+        'min_players': min_players,
+        'roles': roles,
+        'history_user': history_user,
+        'user_rol': user_rol,
+        'rol_user': rol_user,
+    }
+
+    with open('bot_data.json', 'w') as file:
+        json.dump(data, file)
+
+# Функция для загрузки данных из файла
+def load_data_from_file():
+    global history, min_players, roles, history_user, user_rol, rol_user
+
+    try:
+        with open('bot_data.json', 'r') as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        data = default_data  # Если файла нет, используем заглушку
+
+    history = data['history']
+    min_players = data['min_players']
+    roles = data['roles']
+    history_user = data['history_user']
+    user_rol = data['user_rol']
+    rol_user = data['rol_user']
+
+load_data_from_file()
+
 
 #Функция выбора ролей
 #min_calls-гарантирование минемальное количество участников
@@ -93,6 +138,8 @@ def new(message):
         user_rol.update({user_name:rol})
         rol_user.update({rol:user_name})
         bot.send_message(message.chat.id, f"твоя роль {rol}")
+
+        save_data_to_file()
 
 @bot.message_handler(commands=["rolAll"])
 def rolAll(message):
