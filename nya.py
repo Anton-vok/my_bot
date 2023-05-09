@@ -180,9 +180,9 @@ def new_rol(message):
     global min_players, roles, history, history_user, rol_user, user_rol  # добавьте эту строку
     
     if message.chat.id == -975731544:
-        success, x, y= process_input_data(message.text)
+        s, x, y= process_input_data(message.text)
 
-        if succes:
+        if s:
             min_players, roles = x, y
             history = []
             history_user = []
